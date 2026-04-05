@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easter Gift Hunt 🐣</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #fef3c7;
+    --grass: #86efac;
+    --dark-grass: #16a34a;
+    --pastel-pink: #f9a8d4;
+    --pastel-purple: #c4b5fd;
+    --pastel-blue: #93c5fd;
+    --pastel-yellow: #fde68a;
+    --pastel-orange: #fdba74;
+    --pastel-teal: #5eead4;
+    --cream: #fffbeb;
+    --brown: #92400e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(180deg, #bfdbfe 0%, #dbeafe 30%, #bbf7d0 65%, #86efac 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Floating clouds */
+  .cloud {
+    position: fixed;
+    background: white;
+    border-radius: 50px;
+    opacity: 0.8;
+    animation: drift linear infinite;
+  }
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+  }
+  .cloud-1 { width: 120px; height: 40px; top: 8%; animation-duration: 30s; animation-delay: 0s; }
+  .cloud-1::before { width: 60px; height: 60px; top: -30px; left: 15px; }
+  .cloud-1::after { width: 40px; height: 40px; top: -20px; left: 55px; }
+  .cloud-2 { width: 80px; height: 28px; top: 18%; animation-duration: 45s; animation-delay: -15s; }
+  .cloud-2::before { width: 40px; height: 40px; top: -20px; left: 10px; }
+  .cloud-2::after { width: 30px; height: 30px; top: -15px; left: 38px; }
+  .cloud-3 { width: 100px; height: 35px; top: 5%; animation-duration: 38s; animation-delay: -8s; }
+  .cloud-3::before { width: 50px; height: 50px; top: -25px; left: 12px; }
+  .cloud-3::after { width: 35px; height: 35px; top: -18px; left: 48px; }
+
+  @keyframes drift {
+    from { transform: translateX(-200px); }
+    to { transform: translateX(110vw); }
+  }
+
+  /* Butterflies */
+  .butterfly {
+    position: fixed;
+    font-size: 1.4rem;
+    animation: flutter linear infinite;
+    pointer-events: none;
+  }
+  @keyframes flutter {
+    0% { transform: translateX(-50px) translateY(0px) rotate(0deg); }
+    25% { transform: translateX(25vw) translateY(-40px) rotate(5deg); }
+    50% { transform: translateX(50vw) translateY(10px) rotate(-5deg); }
+    75% { transform: translateX(75vw) translateY(-20px) rotate(3deg); }
+    100% { transform: translateX(110vw) translateY(5px) rotate(0deg); }
+  }
+  .b1 { top: 25%; animation-duration: 18s; animation-delay: 0s; }
+  .b2 { top: 40%; animation-duration: 24s; animation-delay: -10s; }
+  .b3 { top: 15%; animation-duration: 20s; animation-delay: -5s; }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 2.5rem 1rem 1rem;
+    position: relative;
+    z-index: 10;
+  }
+  header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    color: #15803d;
+    text-shadow: 3px 3px 0 #bbf7d0, 5px 5px 0 rgba(0,0,0,0.08);
+    letter-spacing: 1px;
+  }
+  header p {
+    color: #166534;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-top: 0.4rem;
+    opacity: 0.85;
+  }
+
+  /* Grass floor decoration */
+  .grass-row {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin: 0.5rem 0 1.5rem;
+    font-size: 1.6rem;
+  }
+
+  /* Score banner */
+  .score-banner {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .score-chip {
+    background: white;
+    border-radius: 50px;
+    padding: 0.5rem 1.4rem;
+    font-weight: 800;
+    font-size: 1rem;
+    color: #15803d;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1), 0 2px 0 #d1fae5;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  /* Egg grid */
+  .egg-field {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 3rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 1.8rem;
+    position: relative;
+    z-index: 5;
+  }
+
+  /* Individual egg */
+  .egg-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.4) translateY(30px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .egg-btn {
+    position: relative;
+    width: 90px;
+    height: 110px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .egg-btn:hover:not(:disabled) { transform: scale(1.1) translateY(-6px) rotate(-3deg); }
+  .egg-btn:active:not(:disabled) { transform: scale(0.95); }
+  .egg-btn:disabled { cursor: default; }
+
+  .egg-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15));
+    transition: filter 0.3s;
+  }
+  .egg-btn:hover:not(:disabled) .egg-svg {
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+  }
+  .egg-btn.opened .egg-svg {
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.1)) grayscale(0.3) brightness(0.85);
+  }
+
+  /* Shake animation */
+  .egg-btn.shake {
+    animation: shake 0.5s ease;
+  }
+  @keyframes shake {
+    0%,100% { transform: rotate(0deg); }
+    20% { transform: rotate(-8deg) scale(1.05); }
+    40% { transform: rotate(8deg) scale(1.08); }
+    60% { transform: rotate(-5deg) scale(1.05); }
+    80% { transform: rotate(5deg); }
+  }
+
+  .egg-label {
+    font-weight: 800;
+    font-size: 0.78rem;
+    color: #166534;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Gift modal overlay */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+  }
+  .modal-overlay.show { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal-card {
+    background: white;
+    border-radius: 28px;
+    padding: 2.5rem 2rem 2rem;
+    max-width: 360px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+    animation: bounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    position: relative;
+    border: 4px solid var(--gift-color, #86efac);
+  }
+  @keyframes bounceIn {
+    from { opacity: 0; transform: scale(0.5) translateY(30px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-card::before {
+    content: '';
+    position: absolute;
+    top: -3px; left: -3px; right: -3px; bottom: -3px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, var(--gift-color, #86efac), white, var(--gift-color, #86efac));
+    z-index: -1;
+    opacity: 0.3;
+  }
+
+  .gift-emoji {
+    font-size: 4.5rem;
+    display: block;
+    margin-bottom: 0.8rem;
+    animation: giftPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+  }
+  @keyframes giftPop {
+    from { transform: scale(0) rotate(-20deg); }
+    to { transform: scale(1) rotate(0deg); }
+  }
+
+  .gift-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.6rem;
+    color: #166534;
+    margin-bottom: 0.4rem;
+  }
+
+  .gift-desc {
+    font-size: 0.95rem;
+    color: #374151;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+
+  .close-btn {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.8rem 2.2rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(22, 163, 74, 0.4);
+  }
+  .close-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(22, 163, 74, 0.5); }
+
+  /* Confetti */
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+    pointer-events: none;
+    z-index: 200;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* All-found message */
+  .all-found {
+    display: none;
+    text-align: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 24px;
+    margin: 0 auto 2rem;
+    max-width: 500px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  .all-found h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: #15803d;
+    margin-bottom: 0.5rem;
+  }
+  .all-found p { color: #374151; font-weight: 700; }
+
+  .reset-btn {
+    margin-top: 1rem;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.7rem 2rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(245,158,11,0.4);
+    transition: transform 0.2s;
+  }
+  .reset-btn:hover { transform: scale(1.05); }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .egg-field { grid-template-columns: repeat(3, 1fr); gap: 1.2rem; padding: 1rem; }
+    .egg-btn { width: 70px; height: 86px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Clouds -->
+<div class="cloud cloud-1"></div>
+<div class="cloud cloud-2"></div>
+<div class="cloud cloud-3"></div>
+
+<!-- Butterflies -->
+<div class="butterfly b1">🦋</div>
+<div class="butterfly b2">🦋</div>
+<div class="butterfly b3">🌸</div>
+
+<header>
+  <h1>🐣 Easter Egg Hunt! 🐣</h1>
+  <p>Tap the eggs to discover your Easter surprises!</p>
+</header>
+
+<div class="grass-row" id="grassRow"></div>
+
+<div class="score-banner">
+  <div class="score-chip">🥚 Found: <span id="foundCount">0</span> / <span id="totalCount">0</span></div>
+  <div class="score-chip">🎁 Gifts: <span id="giftList">none yet</span></div>
+</div>
+
+<div class="all-found" id="allFound">
+  <div style="font-size:3rem">🎊🐰🎊</div>
+  <h2>You found them all!</h2>
+  <p>Happy Easter! Hope your day is full of joy & chocolate 🍫</p>
+  <button class="reset-btn" onclick="resetGame()">🔄 Hunt Again!</button>
+</div>
+
+<div class="egg-field" id="eggField"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-card" id="modalCard">
+    <span class="gift-emoji" id="modalEmoji">🎁</span>
+    <div class="gift-title" id="modalTitle">Gift!</div>
+    <div class="gift-desc" id="modalDesc">A wonderful surprise!</div>
+    <button class="close-btn" onclick="closeModal()">🌷 Lovely! Close</button>
+  </div>
+</div>
+
+<script>
+const EGGS = [
+  {
+    color: '#f9a8d4', stripeColor: '#fbcfe8', label: 'Pink Egg',
+    gift: '🍫', giftName: 'Chocolate Box',
+    desc: 'A gorgeous box of assorted chocolates — dark, milk & white! Perfect for sharing… or not. 😄',
+    giftColor: '#f9a8d4'
+  },
+  {
+    color: '#93c5fd', stripeColor: '#bfdbfe', label: 'Blue Egg',
+    gift: '🧸', giftName: 'Teddy Bear',
+    desc: 'A soft, snuggly teddy with a tiny Easter ribbon. The perfect cuddly companion!',
+    giftColor: '#93c5fd'
+  },
+  {
+    color: '#fde68a', stripeColor: '#fef3c7', label: 'Golden Egg',
+    gift: '💰', giftName: 'Golden Coins',
+    desc: 'A lucky stash of shiny gold coins — fortune smiles on you this Easter! 🍀',
+    giftColor: '#fde68a'
+  },
+  {
+    color: '#c4b5fd', stripeColor: '#ddd6fe', label: 'Purple Egg',
+    gift: '🌸', giftName: 'Spring Flowers',
+    desc: 'A beautiful bouquet of fresh spring blossoms — lilac, tulips & daisies in full bloom!',
+    giftColor: '#c4b5fd'
+  },
+  {
+    color: '#6ee7b7', stripeColor: '#a7f3d0', label: 'Mint Egg',
+    gift: '🍬', giftName: 'Candy Jar',
+    desc: 'A mason jar bursting with pastel jelly beans, gummy chicks & rainbow candy drops!',
+    giftColor: '#6ee7b7'
+  },
+  {
+    color: '#fdba74', stripeColor: '#fed7aa', label: 'Orange Egg',
+    gift: '🎨', giftName: 'Art Kit',
+    desc: 'A vibrant art set with watercolors, brushes & sketchbook. Create your own Easter masterpiece!',
+    giftColor: '#fdba74'
+  },
+  {
+    color: '#f87171', stripeColor: '#fca5a5', label: 'Red Egg',
+    gift: '🍓', giftName: 'Berry Basket',
+    desc: 'A handwoven basket filled with fresh strawberries, raspberries & blueberries. So fresh!',
+    giftColor: '#f87171'
+  },
+  {
+    color: '#5eead4', stripeColor: '#99f6e4', label: 'Teal Egg',
+    gift: '🎮', giftName: 'Game Voucher',
+    desc: 'A shiny digital voucher for your favourite game store. New adventures await!',
+    giftColor: '#5eead4'
+  },
+  {
+    color: '#fcd34d', stripeColor: '#fde68a', label: 'Sunny Egg',
+    gift: '☀️', giftName: 'Sunshine Kit',
+    desc: 'Sunglasses, a tiny succulent & lemonade mix — everything you need for a sunny spring day!',
+    giftColor: '#fcd34d'
+  },
+  {
+    color: '#a78bfa', stripeColor: '#c4b5fd', label: 'Violet Egg',
+    gift: '📚', giftName: 'Story Books',
+    desc: 'Three beautifully illustrated adventure books to whisk you away to magical worlds!',
+    giftColor: '#a78bfa'
+  },
+  {
+    color: '#fb7185', stripeColor: '#fda4af', label: 'Rose Egg',
+    gift: '🕯️', giftName: 'Scented Candle',
+    desc: 'A hand-poured beeswax candle with hints of lavender & vanilla — pure cozy vibes. 🌿',
+    giftColor: '#fb7185'
+  },
+  {
+    color: '#34d399', stripeColor: '#6ee7b7', label: 'Forest Egg',
+    gift: '🌱', giftName: 'Plant Pot',
+    desc: 'A little terracotta pot with a mystery seedling inside — grow something beautiful this spring!',
+    giftColor: '#34d399'
+  },
+];
+
+let found = 0;
+let openedEggs = new Set();
+let foundGifts = [];
+
+function drawEgg(color, stripeColor) {
+  return `
+    <svg class="egg-svg" viewBox="0 0 90 110" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="eggClip${color.replace('#','')}">
+          <ellipse cx="45" cy="58" rx="34" ry="44"/>
+        </clipPath>
+      </defs>
+      <ellipse cx="45" cy="58" rx="34" ry="44" fill="${color}"/>
+      <!-- stripes -->
+      <g clip-path="url(#eggClip${color.replace('#','')})">
+        <rect x="0" y="45" width="90" height="10" fill="${stripeColor}" opacity="0.6"/>
+        <rect x="0" y="65" width="90" height="6" fill="${stripeColor}" opacity="0.4"/>
+        <!-- dots -->
+        <circle cx="20" cy="35" r="5" fill="white" opacity="0.35"/>
+        <circle cx="68" cy="40" r="4" fill="white" opacity="0.3"/>
+        <circle cx="40" cy="25" r="3" fill="white" opacity="0.25"/>
+        <circle cx="60" cy="75" r="4" fill="white" opacity="0.25"/>
+        <!-- shine -->
+        <ellipse cx="32" cy="30" rx="8" ry="12" fill="white" opacity="0.2" transform="rotate(-20 32 30)"/>
+      </g>
+      <ellipse cx="45" cy="58" rx="34" ry="44" fill="none" stroke="${stripeColor}" stroke-width="2" opacity="0.5"/>
+      <!-- crack lines when opened (hidden by default) -->
+    </svg>`;
+}
+
+function buildGame() {
+  const field = document.getElementById('eggField');
+  const totalEl = document.getElementById('totalCount');
+  field.innerHTML = '';
+  found = 0;
+  openedEggs.clear();
+  foundGifts = [];
+  updateScore();
+  totalEl.textContent = EGGS.length;
+
+  // Shuffle eggs
+  const shuffled = [...EGGS].sort(() => Math.random() - 0.5);
+
+  shuffled.forEach((egg, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'egg-wrap';
+    wrap.style.animationDelay = `${i * 0.07}s`;
+
+    const btn = document.createElement('button');
+    btn.className = 'egg-btn';
+    btn.id = `egg-${i}`;
+    btn.innerHTML = drawEgg(egg.color, egg.stripeColor);
+    btn.dataset.index = i;
+    btn.addEventListener('click', () => openEgg(btn, egg, i));
+
+    const label = document.createElement('div');
+    label.className = 'egg-label';
+    label.textContent = egg.label;
+
+    wrap.appendChild(btn);
+    wrap.appendChild(label);
+    field.appendChild(wrap);
+  });
+
+  // Build grass
+  const grass = document.getElementById('grassRow');
+  grass.textContent = '🌿🌾🌿🌱🌾🌿🌱🌾🌿🌾🌿🌱🌾🌿🌱🌿🌾🌿';
+
+  document.getElementById('allFound').style.display = 'none';
+}
+
+function openEgg(btn, egg, idx) {
+  if (openedEggs.has(idx)) return;
+  openedEggs.add(idx);
+  found++;
+  foundGifts.push(egg.gift);
+
+  // Shake animation
+  btn.classList.add('shake');
+  setTimeout(() => {
+    btn.classList.remove('shake');
+    btn.classList.add('opened');
+    btn.disabled = true;
+    showModal(egg);
+    launchConfetti(egg.color);
+    updateScore();
+  }, 500);
+}
+
+function showModal(egg) {
+  const modal = document.getElementById('modal');
+  const card = document.getElementById('modalCard');
+  document.getElementById('modalEmoji').textContent = egg.gift;
+  document.getElementById('modalTitle').textContent = egg.giftName;
+  document.getElementById('modalDesc').textContent = egg.desc;
+  card.style.setProperty('--gift-color', egg.giftColor);
+  card.style.borderColor = egg.giftColor;
+  modal.classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+  if (found === EGGS.length) {
+    setTimeout(() => {
+      document.getElementById('allFound').style.display = 'block';
+      document.getElementById('allFound').scrollIntoView({ behavior: 'smooth' });
+      bigConfetti();
+    }, 300);
+  }
+}
+
+function updateScore() {
+  document.getElementById('foundCount').textContent = found;
+  const gl = document.getElementById('giftList');
+  gl.textContent = foundGifts.length ? foundGifts.join(' ') : 'none yet';
+}
+
+function launchConfetti(color) {
+  const colors = [color, '#fde68a', '#f9a8d4', '#93c5fd', '#6ee7b7', '#c4b5fd'];
+  for (let i = 0; i < 25; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti-piece';
+    c.style.left = (20 + Math.random() * 60) + 'vw';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+    c.style.animationDelay = (Math.random() * 0.5) + 's';
+    c.style.transform = `rotate(${Math.random()*360}deg)`;
+    c.style.width = (8 + Math.random() * 8) + 'px';
+    c.style.height = (8 + Math.random() * 8) + 'px';
+    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 4000);
+  }
+}
+
+function bigConfetti() {
+  for (let i = 0; i < 5; i++) {
+    setTimeout(() => launchConfetti('#fde68a'), i * 300);
+  }
+}
+
+function resetGame() {
+  buildGame();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+buildGame();
+</script>
+</body>
+</html>
